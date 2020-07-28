@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React Sports Game</title>
+</head>
+<style>
+    h1 {
+        font-family: Bahnschrift;
+    }
+
+    h4 {
+        font-family: Bahnschrift;
+    }
+
+    img {
+        height: 100px;
+    }
+
+    .Game {
+        display: flex;
+    }
+
+    button {
+        font-family: Impact;
+        background-color: orange;
+        width: 100px;
+    }
+</style>
+
+
+<body>
+
+    <div id="root"></div>
+
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type="text/babel">
+
+        function Game(props) {
+            return (
+                <div><h1>Welcome to {props.venue}</h1>
+                    <div className="Game">
+                        <Team name={props.visitingTeam.name} logo={props.visitingTeam.logoSrc}
+                            shotsTaken="Shots Taken:" score="Score:" />
+                        <Team name={props.hometeam.name} logo={props.hometeam.logoSrc}
+                            shotsTaken="Shots Taken:" score="Score:" />
+                    </div>
+                </div>
+            )
+        }
+
+        function App(props) {
+            let bulls = {
+                name: "Chicago Bulls",
+                logoSrc: "https://cdn.mos.cms.futurecdn.net/8227s5kMEx84YEHWLbxCb4-1200-80.jpg"
+            }
+
+            let pacers = {
+                name: "Indiana Pacers",
+                logoSrc: "https://content.sportslogos.net/logos/6/224/full/x8e15d8nfylywft2g882gkyyd.gif"
+            }
+
+            let lakers = {
+                name: "Los Angeles Lakers",
+                logoSrc: "https://www.pngitem.com/pimgs/m/152-1528587_transparent-lakers-clipart-los-angeles-lakers-logo-transparent.png"
+            }
+
+            let rockets = {
+                name: "Houston Rockets",
+                logoSrc: "https://d1nuw15ac20b2a.cloudfront.net/wp-content/uploads/2019/04/12103137/houston-rockets-logo-min.png"
+            }
+
+            return (
+                <div>
+                    <Game venue="Bankers Life Fieldhouse"
+                        hometeam={pacers} visitingTeam={bulls} />
+                    <Game venue="Staples Center"
+                        hometeam={lakers} visitingTeam={rockets} />
+                </div>
+
+            )
+
+        }
+        class Team extends React.Component {
+            constructor(props) {
+                super(props)
+                this.state = {
+                    shotsTaken: 0,
+                    score: 0
+                }
+
+                this.shotSound = new Audio("./assets/Swish+2.mp3")
+                this.scoreSound = new Audio("./assets/Ball+Hit+Cheer.mp3")
+            }
+
+            handleShoot = (event) => {
+                this.shotSound.play()
+                this.setState((state, props) => {
+                    if (Math.random() > .5) {
+                        this.scoreSound.play()
+                        return { score: state.score + 1, shotsTaken: state.shotsTaken + 1 }
+                    }
+                    return { shotsTaken: state.shotsTaken + 1 }
+                })
+
+            }
+
+            render() {
+                let percentageDiv
+                if (this.state.shotsTaken) {
+                    let shotPercentage = Math.round((this.state.score / this.state.shotsTaken) * 100)
+                    percentageDiv = (
+                        <h4>Shooting Percentage: {shotPercentage} </h4>
+                    )
+                }
+                return (<div>
+                    <h1>{this.props.name}</h1>
+                    <img src={this.props.logo} />
+                    <h4>{this.props.shotsTaken}</h4>
+                    <h4>{this.state.shotsTaken}</h4>
+                    <h4>{this.props.score}</h4>
+                    <h4>{this.state.score}</h4>
+                    <button onClick={this.handleShoot}>Shoot</button>
+                    {percentageDiv}
+                </div>)
+            }
+        }
+
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        )
+    </script>
+</body>
+
+</html>
